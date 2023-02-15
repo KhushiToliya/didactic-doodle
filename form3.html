@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Registration Form</title>
+  <style>
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+label {
+  margin-top: 1rem;
+}
+
+input, button {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid gray;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+table {
+  margin-top: 2rem;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  padding: 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid gray;
+}
+
+th {
+  background-color: #4CAF50;
+  color: white;
+  font-weight: bold;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
+  </style>
+</head>
+<body>
+  <form>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+<label for="email">Email:</label>
+<input type="email" id="email" name="email" required>
+
+<label for="password">Password:</label>
+<input type="password" id="password" name="password" required>
+
+<label for="dob">Date of Birth (between 18 and 55 years old):</label>
+<input type="date" id="dob" name="dob" required>
+
+<input type="checkbox" id="acceptTerms" name="acceptTerms" required>
+<label for="acceptTerms">Accept Terms & Conditions</label>
+
+<div id="errorMessages"></div>
+
+<button type="submit">Submit</button>
+  </form>
+  <table id="userData">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Password</th>
+        <th>Dob</th>
+        <th>Accepted terms?</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <script>
+    const form = document.querySelector('form');
+    const userData = document.querySelector('#userData tbody');
+    const errorMessages = document.querySelector('#errorMessages');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+  
+      errorMessages.innerHTML = '';
+
+
+      const name = document.querySelector('#name').value;
+      const email = document.querySelector('#email').value;
+      const password = document.querySelector('#password').value;
+      const dob = new Date(document.querySelector('#dob').value);
+      const acceptTerms = document.querySelector('#acceptTerms').checked;
+      const currentDate = new Date();
+      const age = currentDate.getFullYear() - dob.getFullYear();
+
+      if (!name || !email || !password || !dob || !acceptTerms) {
+        errorMessages.innerHTML += '<p class="error">All fields are required!</p>';
+        return;
+      }
+
+      if (age < 18 || age > 55) {
+        errorMessages.innerHTML += '<p class="error">You must be between 18 and 55 years old to register!</p>';
+        return;
+      }
+
+      if (!acceptTerms) {
+        errorMessages.innerHTML += '<p class="error">You must accept the terms and conditions to register!</p>';
+return;
+}
+
+  const row = userData.insertRow();
+  const nameCell = row.insertCell(0);
+  const emailCell = row.insertCell(1);
+  const passwordCell = row.insertCell(2);
+  const dobCell = row.insertCell(3);
+  const acceptTermsCell = row.insertCell(4);
+
+  nameCell.innerHTML = name;
+  emailCell.innerHTML = email;
+  passwordCell.innerHTML = password;
+  dobCell.innerHTML = dob.toDateString();
+  acceptTermsCell.innerHTML = acceptTerms ? 'Yes' : 'No';
+
+
+  const userDataObject = {
+    name: name,
+    email: email,
+    password: password,
+    dob: dob.toDateString(),
+    acceptTerms: acceptTerms
+  };
+
+  const userDataString = JSON.stringify(userDataObject);
+  localStorage.setItem('userData', userDataString);
+
+
+  form.reset();
+});
+
+
+const userDataString = localStorage.getItem('userData');
+
+if (userDataString) {
+  const userDataObject = JSON.parse(userDataString);
+  const name = userDataObject.name;
+  const email = userDataObject.email;
+  const password = userDataObject.password;
+  const dob = userDataObject.dob;
+  const acceptTerms = userDataObject.acceptTerms;
+
+  const row = userData.insertRow();
+  const nameCell = row.insertCell(0);
+  const emailCell = row.insertCell(1);
+  const passwordCell = row.insertCell(2);
+  const dobCell = row.insertCell(3);
+  const acceptTermsCell = row.insertCell(4);
+
+  nameCell.innerHTML = name;
+  emailCell.innerHTML = email;
+  passwordCell.innerHTML = password;
+  dobCell.innerHTML = dob;
+  acceptTermsCell.innerHTML = acceptTerms ? 'Yes' : 'No';
+}
+  </script>
+</body>
+</html>
